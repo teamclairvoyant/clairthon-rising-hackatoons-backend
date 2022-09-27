@@ -5,10 +5,11 @@ import uuid
 def lambda_handler(event, context):
     table_name = 'CandidateRegistrationDetails'
     item = event['body']
-    id = uuid.uuid1().hex
-    item['id'] = id
-    print(item)
-    _insert_item(table_name, item)
+    id = item.get('id', None)
+    if id == None:
+        id = uuid.uuid1().hex
+        item['id'] = id
+    insertItem(table_name, item)
     return {
         'statusCode': 200,
         'headers': {
@@ -17,11 +18,11 @@ def lambda_handler(event, context):
         'body': json.dumps(id)
     }
 
-def _get_resource():
+def getResource():
     return boto3.resource('dynamodb')
 
-def _insert_item(table_name, item):
-    dynamodb = _get_resource()
+def insertItem(table_name, item):
+    dynamodb = getResource()
     table = dynamodb.Table(table_name)
     table.put_item(Item=item)
     return 200

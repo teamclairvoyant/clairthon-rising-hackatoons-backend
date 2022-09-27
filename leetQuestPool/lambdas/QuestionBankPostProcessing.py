@@ -30,7 +30,7 @@ def lambda_handler(event, context):
 def startProcess(df):
 	listToSave = []
 	for _, row in df.iterrows():
-		technology = row['technology']
+		technology = row['technology'].lower()
 		typeOfQuestion = row['typeOfQuestion']
 		levelOfDifficulty = row['levelOfDifficulty']
 		question = row['question']
