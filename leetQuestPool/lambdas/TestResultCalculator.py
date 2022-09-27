@@ -1,7 +1,9 @@
 import json
 import boto3
 import uuid
+import requests
 
+url = 'https://hooks.slack.com/services/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'
 
 def lambda_handler(event, context):
     body = event['body']
@@ -28,15 +30,32 @@ def lambda_handler(event, context):
     body['resultId']=id
     persistCandidateTestDetails('CandidateTestResults', testScore)
     persistCandidateTestDetails('CandidateTestLinkDetails', body)
+    publishToSlack(body['name'], body['email'], testScore)
     
     return {
         'statusCode': 200,
         'headers': {
-            'Access-Control-Allow-*': '*'
-            
+            'Access-Control-Allow-*': '*',
+            'Content-type': 'application/json'
         },
         'body': json.dumps(testScore)
     }
+
+def publishToSlack(name, email, testScore):
+    data = {
+        'candidateId':testScore['candidateId'],
+        'name':name,
+        'email': email,
+        'totalScore':str(testScore['totalScore']) +'/'+ str(testScore['totalQuestions']),
+        'testStatus':testScore['testStatus']
+    }
+    payload = {'text': json.dumps(data)}
+    header = {
+        'Access-Control-Allow-*': '*',
+        'Content-type': 'application/json'
+    }
+    body = requests.post(url, json = payload, headers = header)
+
 
 def getGeneratedTestData(tableName, candidateId):
     item = {'candidateDetailsId' : candidateId}
@@ -50,19 +69,19 @@ def getDynamoDbResource():
     return boto3.resource('dynamodb')
 
 def persistCandidateTestDetails(tableName, item):
-	dynamodb = getDynamoDbResource()
-	table = dynamodb.Table(tableName)
-	return table.put_item(Item=item)
+    dynamodb = getDynamoDbResource()
+    table = dynamodb.Table(tableName)
+    return table.put_item(Item=item)
 
 def getTestScore(testResults, generatedTestData):
     score = 0
     for result in testResults:
         answer = getAnswer(result['questionId'], generatedTestData)
         if (answer == result['candidateAnswer']):
-            result['correct'] = True
+            result['correctness'] = "correct"
             score = score + 1
         else:
-            result['correct'] = False
+            result['correctness'] = "incorrect"
     return (testResults, score)
 
 def getAnswer(id, generatedTestData):
