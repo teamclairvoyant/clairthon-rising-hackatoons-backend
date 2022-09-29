@@ -2,13 +2,23 @@ import json
 import boto3
 import uuid
 import requests
+import urllib.parse
 
-url = 'https://hooks.slack.com/services/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'
+url = 'https://hooks.slack.com/services/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'
+s3 = boto3.client('s3')
 
 def lambda_handler(event, context):
-    body = event['body']
+    # Get the object from the event and show its content type
+    bucket = event['Records'][0]['s3']['bucket']['name']
+    key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
+    body = getS3Content(bucket, key)
+    candidateDetailsId = body['candidateDetailsId']
+    
     testDetails = body['testQuestions']
-    generatedTestData = getGeneratedTestData('CandidateTestLinkDetails', body['candidateDetailsId'])
+    generatedTestDataItem = {'candidateDetailsId' : candidateDetailsId}
+    generatedTestData = getTableData('CandidateTestLinkDetails', generatedTestDataItem)
+    candidateDataItem = {'id' : candidateDetailsId}
+    candidateData = getTableData('CandidateRegistrationDetails', candidateDataItem)
     testScore = {}
     totalQuestions = 0;
     totalScore = 0;
@@ -26,20 +36,17 @@ def lambda_handler(event, context):
     testScore['totalQuestions'] = totalQuestions
     testScore['testResult'] = techwiseResult
     testScore['testStatus'] = getTestStatus(totalScore, totalQuestions)
+    
+    candidateData['result'] = testScore['testStatus']
+    
     body['testTaken']=True
     body['resultId']=id
+    
     persistCandidateTestDetails('CandidateTestResults', testScore)
     persistCandidateTestDetails('CandidateTestLinkDetails', body)
+    persistCandidateTestDetails('CandidateRegistrationDetails', candidateData)
     publishToSlack(body['name'], body['email'], testScore)
-    
-    return {
-        'statusCode': 200,
-        'headers': {
-            'Access-Control-Allow-*': '*',
-            'Content-type': 'application/json'
-        },
-        'body': json.dumps(testScore)
-    }
+
 
 def publishToSlack(name, email, testScore):
     data = {
@@ -57,8 +64,7 @@ def publishToSlack(name, email, testScore):
     body = requests.post(url, json = payload, headers = header)
 
 
-def getGeneratedTestData(tableName, candidateId):
-    item = {'candidateDetailsId' : candidateId}
+def getTableData(tableName, item):
     dynamodb = getDynamoDbResource()
     table = dynamodb.Table(tableName)
     data = table.get_item(Key=item)
@@ -96,3 +102,8 @@ def getTestStatus(totalScore, totalQuestions):
         return 'Pass'
     else:
         return 'Fail'
+
+def getS3Content(bucket, key):
+    data = s3.get_object(Bucket=bucket, Key=key)
+    jsonData = json.loads(data['Body'].read())
+    return jsonData

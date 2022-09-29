@@ -13,7 +13,6 @@ def lambda_handler(event, context):
     else:
         response = getAllCandidates()
             
-    print(response)
     return {
         'statusCode': 200,
         'headers': {
@@ -23,11 +22,11 @@ def lambda_handler(event, context):
     }
 
 def getCandidate(candidateId):
-	item = {
-		'id': candidateId
-	}
-	candidateDetail = getItem(item)
-	return candidateDetail['Item']
+    item = {
+        'id': candidateId
+    }
+    candidateDetail = getItem(item)
+    return candidateDetail['Item']
 
 def getItem(item):
     dynamodb = getDynamoDbResource()
@@ -38,13 +37,16 @@ def getDynamoDbResource():
     return boto3.resource('dynamodb')
 
 def getAllCandidates():
-	dynamodb = getDynamoDbResource()
-	table = dynamodb.Table(TABLE)
-	response = table.scan()
-	return response['Items']
+    dynamodb = getDynamoDbResource()
+    table = dynamodb.Table(TABLE)
+    response = table.scan()
+    return response['Items']
 
 class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Decimal):
             return str(obj)
         return json.JSONEncoder.default(self, obj)
+
+
+
