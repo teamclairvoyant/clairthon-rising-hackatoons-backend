@@ -4,7 +4,7 @@ import uuid
 import requests
 import urllib.parse
 
-url = 'https://hooks.slack.com/services/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'
+url = os.environ['url']
 s3 = boto3.client('s3')
 
 def lambda_handler(event, context):
