@@ -8,8 +8,8 @@ def lambda_handler(event, context):
     secondTemp = 'question answer\n'
     path = '{skill}/{levelOfDifficulty}/theory/'
     body = json.loads(event['body'])
-    skill = body['skill']
-    levelOfDifficulty = body['levelOfDifficulty']
+    skill = body['skill'].lower()
+    levelOfDifficulty = body['levelOfDifficulty'].lower()
     numberOfQuestions = body['noOfQuestions']
     
     s3List = getFilesFromS3('leetquestpool', path.format(skill=skill, levelOfDifficulty=levelOfDifficulty))
