@@ -18,7 +18,8 @@ def lambda_handler(event, context):
     key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
     try:
         response = s3.get_object(Bucket=bucket, Key=key)
-        df = pd.read_csv(response['Body'], index_col=0)
+        print(key)
+        df = pd.read_csv(response['Body'], index_col=0, encoding='utf-8')
 
         startProcess(df)
         return response['ContentType']
@@ -41,15 +42,15 @@ def startProcess(df):
 		if isMcq:
 			path = (technology+'/'+levelOfDifficulty+'/'+'mcq/')
 			mcqOption_list = mcqOptions.split(',')
-
-			item = {
+			mcqLen = len(mcqOption_list)
+			item ={
 				'question': question,
-				'option 1':mcqOption_list[0],
-				'option 2':mcqOption_list[1],
-				'option 3':mcqOption_list[2],
-				'option 4':mcqOption_list[3],
 				'answer': answer
 			}
+			for i in range(mcqLen):
+				elemKey = 'option'+str(i+1)
+				item[elemKey]=mcqOption_list[i]
+			print(item)
 		else:
 			path = (technology+'/'+levelOfDifficulty+'/'+'theory/')
 			item = {
