@@ -3,8 +3,10 @@ import boto3
 import uuid
 import requests
 import urllib.parse
+import os
 
 url = os.environ['url']
+feedbackUrl = os.environ['feedbackUrl']
 s3 = boto3.client('s3')
 
 def lambda_handler(event, context):
@@ -36,6 +38,7 @@ def lambda_handler(event, context):
     testScore['totalQuestions'] = totalQuestions
     testScore['testResult'] = techwiseResult
     testScore['testStatus'] = getTestStatus(totalScore, totalQuestions)
+    testScore['feedbackStatus'] = feedbackUrl+candidateDetailsId
     
     candidateData['result'] = testScore['testStatus']
     
@@ -45,6 +48,7 @@ def lambda_handler(event, context):
     persistCandidateTestDetails('CandidateTestResults', testScore)
     persistCandidateTestDetails('CandidateTestLinkDetails', body)
     persistCandidateTestDetails('CandidateRegistrationDetails', candidateData)
+    
     publishToSlack(body['name'], body['email'], testScore)
 
 
@@ -54,7 +58,8 @@ def publishToSlack(name, email, testScore):
         'name':name,
         'email': email,
         'totalScore':str(testScore['totalScore']) +'/'+ str(testScore['totalQuestions']),
-        'testStatus':testScore['testStatus']
+        'testStatus':testScore['testStatus'],
+        'feedbackStatus':testScore['feedbackStatus']
     }
     payload = {'text': json.dumps(data)}
     header = {

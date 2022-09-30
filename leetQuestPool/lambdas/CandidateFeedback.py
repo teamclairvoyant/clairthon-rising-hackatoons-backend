@@ -3,9 +3,11 @@ import boto3
 from decimal import Decimal
 
 def lambda_handler(event, context):
-    print(event['body'])
     candidateId = event['query']['candidateId']
-    candidateResult = getCandidateResult(candidateId)
+    candidateResult = getTableData('CandidateTestResults', {'candidateId':candidateId})
+    candidateData = getTableData('CandidateRegistrationDetails', {'id': candidateId})
+    candidateResult['name'] = candidateData['name']
+    candidateResult['email'] = candidateData['email']
     return {
         'statusCode': 200,
         'headers': {
@@ -23,10 +25,10 @@ def getItem(table_name, item):
     table = dynamodb.Table(table_name)
     return table.get_item(Key=item)
 
-def getCandidateResult(candidateId):
-    item = {'candidateId' : candidateId}
-    dynamodbObj = getItem('CandidateTestResults', item)
+def getTableData(tableName, item):
+    dynamodbObj = getItem(tableName, item)
     return dynamodbObj['Item']
+
 
 class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
