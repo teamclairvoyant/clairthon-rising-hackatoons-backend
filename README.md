@@ -1,32 +1,40 @@
-# Clairthon - Leet Quest Pool
 
-## Find the Documentation for our use case here
-https://docs.google.com/document/d/11J6LwqGh0dpzkQg7w6uj75nROSfSLmVftCq_Doa69ng/edit
+# Leet Quest Pool  | [DEMO](https://leet-quest-pool.netlify.app/) | [Documentation](https://docs.google.com/document/d/11J6LwqGh0dpzkQg7w6uj75nROSfSLmVftCq_Doa69ng/edit) | [JIRA](https://clairvoyant.atlassian.net/jira/software/projects/CLAIRTHON/boards/246/backlog)
+A platform to conduct the first technical round for a candidate shortlisted for interview and create a pool of question banks along with providing a way to add/retrieve questions from question banks
 
-## Tech
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.2.1.
 
-## Development server
+## Technical Stack
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
-## Code scaffolding
+-   Python 3.7
+    
+-   AWS Dynamodb
+    
+-   AWS Lambda
+    
+-   AWS API Gateway
+    
+-   AWS S3
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
-## Running unit tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## 🚀 Framework
 
-## Running end-to-end tests
+**![](https://lh4.googleusercontent.com/9vC5HVB-5xEuMZf-TQuR04Gb-FFafdEhByDo3_zmK2hTtez1yU9eiOYlk1gL1_SzPpBvQ9heaOj01-lVBi3X7JFEJvhzeSVnPZk80QfWd49CZVe8ayMk31ET0nUdKZvIbepBufZbwALpuZZwhTYH3XplGolP8oGDpiXeQ77I6RJc0BWlYONhWy2WJQ)**
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+### Database Schema
+**![](https://lh5.googleusercontent.com/6RqHEcaWfOrINSA3EjiGH0mTxW2gdztOzFOq-1pG2c75gN3Y7w0Z_P_DpCvi43ope1HmTSewJDoXdyy8Vzx1GAS62bLRX9gA-iwF0_pCrejdBvu1IgAtkfPcQoAwXMpfIBbWKzkU4AGJXC6-afyfkbiFi6227lbEE5kse5phX7ZibkSDP2pd-goAVg)**
 
-## Further help
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+### Future Scope 
+
+-   Integrate CI/CD for backend.
+    
+-   Add more validations in backend modules.
+    
+-   Sonar integration.
+    
+-   Junits.
