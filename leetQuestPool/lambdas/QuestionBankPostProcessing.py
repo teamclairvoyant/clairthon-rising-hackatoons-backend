@@ -48,7 +48,7 @@ def startProcess(df):
 				'answer': answer
 			}
 			for i in range(mcqLen):
-				elemKey = 'option'+str(i+1)
+				elemKey = 'option '+str(i+1)
 				item[elemKey]=mcqOption_list[i]
 			print(item)
 		else:
